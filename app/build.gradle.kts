@@ -1,6 +1,11 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
+    id("com.github.ben-manes.versions") version "0.51.0"
     application
     checkstyle
+    jacoco
     id("org.sonarqube") version "6.2.0.5505"
 }
 
@@ -23,6 +28,20 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.test {
+    useJUnitPlatform()
+    // https://technology.lastminute.com/junit5-kotlin-and-gradle-dsl/
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
+        // showStackTraces = true
+        // showCauses = true
+        showStandardStreams = true
+    }
+}
+
+tasks.jacocoTestReport { reports { xml.required.set(true) } }
 
 sonar {
     properties {
