@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class App {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         var app = getApp();
         app.start(7070);
     }
