@@ -7,6 +7,7 @@ import io.javalin.Javalin;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class App {
@@ -20,7 +21,7 @@ public class App {
         return System.getenv().getOrDefault("DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
     }
 
-    public static Javalin getApp() throws Exception {
+    public static Javalin getApp() {
 
         var jdbcUrl = getDatabaseUrl();
         var hikariConfig = new HikariConfig();
@@ -35,6 +36,8 @@ public class App {
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
             statement.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         BaseRepository.dataSource = dataSource;
