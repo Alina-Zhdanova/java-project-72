@@ -1,5 +1,18 @@
 package hexlet.code.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 
-public record Url(int id, String name, Timestamp createdAt) { }
+@Getter
+@Setter
+public final class Url {
+    private Long id;
+    private String name;
+    private Timestamp createdAt;
+
+    public Url(String name) {
+        this.name = name;
+    }
+}

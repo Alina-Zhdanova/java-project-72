@@ -8,6 +8,7 @@ plugins {
     checkstyle
     jacoco
     id("org.sonarqube") version "6.2.0.5505"
+    id("io.freefair.lombok") version "8.13.1"
 }
 
 group = "hexlet.code"
@@ -28,6 +29,8 @@ dependencies {
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("gg.jte:jte:3.1.9")
+    implementation("io.javalin:javalin-rendering:6.1.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
