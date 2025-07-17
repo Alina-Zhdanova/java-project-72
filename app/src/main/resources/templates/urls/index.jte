@@ -4,51 +4,44 @@
 @param UrlsPage page
 
 @template.layout.page(
-    content = @`
-        <div>
+content = @`
+    <div class="container py-4">
 
-            @if(page.getFlash() != null)
-                <p>${page.getFlash()}</p>
-            @endif
+        @if(page.getFlash() != null)
+            <div class="alert alert-success alert-dismissible fade show mb-4 w-75 mx-auto" role="alert">
+                ${page.getFlash()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-            <h1>Сайты</h1>
+        <h1 class="mt-4 mb-4 fw-bold text-dark text-center">Сайты</h1>
 
-            <table>
-
+        <div class="table-responsive shadow-sm rounded-3 overflow-hidden">
+            <table class="table table-hover table-striped border mb-0">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Имя</th>
-                    <th>Последняя проверка</th>
-                    <th>Код ответа</th>
+                    <th class="bg-light text-dark py-3 px-4 fw-bold">ID</th>
+                    <th class="bg-light text-dark py-3 px-4 fw-bold">Имя</th>
+                    <th class="bg-light text-dark py-3 px-4 fw-bold">Последняя проверка</th>
+                    <th class="bg-light text-dark py-3 px-4 fw-bold">Код ответа</th>
                 </tr>
                 </thead>
-
                 <tbody>
-
                 @for(var url : page.getUrls())
-
                     <tr>
-                        <td>
-                            ${url.getId()}
+                        <td class="py-3 px-4">${url.getId()}</td>
+                        <td class="py-3 px-4">
+                            <a href="${NamedRoutes.urlPath(url.getId())}" class="text-decoration-none text-primary fw-medium">${url.getName()}</a>
                         </td>
-                        <td>
-                            <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
-                        </td>
-                        <td>
-                            ${url.getCreatedAt().toString()}
-                        </td>
-                        <td>
-                            200
+                        <td class="py-3 px-4">${url.getCreatedAt().toString()}</td>
+                        <td class="py-3 px-4">
+                            <span class="badge bg-success text-white rounded-pill">200</span>
                         </td>
                     </tr>
-
                 @endfor
-
                 </tbody>
-
             </table>
-
         </div>
-    `
+    </div>
+`
 )
