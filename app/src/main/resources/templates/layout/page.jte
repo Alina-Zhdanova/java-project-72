@@ -1,5 +1,6 @@
 @import gg.jte.Content
 @import hexlet.code.util.NamedRoutes
+
 @param Content content
 
 <!doctype html>

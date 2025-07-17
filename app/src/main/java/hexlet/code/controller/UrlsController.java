@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import hexlet.code.dto.BasePage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
@@ -15,9 +16,16 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlsController {
 
+    public static void root(Context ctx) {
+        var page = new BasePage();
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        ctx.render("index.jte", model("page", page));
+    }
+
     public static void index(Context ctx) {
         var urls = UrlRepository.getEntities();
         var page = new UrlsPage(urls);
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
         ctx.render("urls/index.jte", model("page", page));
     }
 
@@ -39,6 +47,7 @@ public class UrlsController {
 
             if (UrlRepository.find(name).isPresent()) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.redirect(NamedRoutes.urlsPath());
                 return;
             }
 
@@ -48,6 +57,7 @@ public class UrlsController {
 
         } catch (MalformedURLException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.redirect(NamedRoutes.rootPath());
             return;
         }
 

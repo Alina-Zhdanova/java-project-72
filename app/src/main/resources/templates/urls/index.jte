@@ -7,6 +7,10 @@
     content = @`
         <div>
 
+            @if(page.getFlash() != null)
+                <p>${page.getFlash()}</p>
+            @endif
+
             <h1>Сайты</h1>
 
             <table>
