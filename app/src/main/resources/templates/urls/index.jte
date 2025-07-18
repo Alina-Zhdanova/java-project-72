@@ -8,7 +8,7 @@ content = @`
     <div class="container py-4">
 
         @if(page.getFlash() != null)
-            <div class="alert alert-success alert-dismissible fade show mb-4 w-75 mx-auto" role="alert">
+            <div class="alert alert-${page.getFlashType()} alert-dismissible fade show mb-4 w-75 mx-auto" role="alert">
                 ${page.getFlash()}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>

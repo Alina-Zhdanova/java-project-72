@@ -19,6 +19,7 @@ public class UrlsController {
     public static void root(Context ctx) {
         var page = new BasePage();
         page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flashType"));
         ctx.render("index.jte", model("page", page));
     }
 
@@ -26,6 +27,7 @@ public class UrlsController {
         var urls = UrlRepository.getEntities();
         var page = new UrlsPage(urls);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flashType"));
         ctx.render("urls/index.jte", model("page", page));
     }
 
@@ -47,6 +49,7 @@ public class UrlsController {
 
             if (UrlRepository.find(name).isPresent()) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.sessionAttribute("flashType", "warning");
                 ctx.redirect(NamedRoutes.urlsPath());
                 return;
             }
@@ -54,9 +57,11 @@ public class UrlsController {
             var url = new Url(name);
             UrlRepository.save(url);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flashType", "success");
 
         } catch (MalformedURLException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flashType", "danger");
             ctx.redirect(NamedRoutes.rootPath());
             return;
         }

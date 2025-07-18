@@ -8,7 +8,7 @@ content = @`
     <div class="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center bg-light">
 
         @if(page.getFlash() != null)
-            <div class="alert alert-warning alert-dismissible fade show w-75 mb-4" role="alert">
+            <div class="alert alert-${page.getFlashType()} alert-dismissible fade show w-75 mb-4" role="alert">
                 ${page.getFlash()}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -22,7 +22,7 @@ content = @`
                 <form action="${NamedRoutes.urlsPath()}" method="post" class="d-flex justify-content-center mb-3">
                     <div class="input-group input-group-lg w-75">
                         <input type="text" name="url" class="form-control border-0 shadow-sm" placeholder="Введите URL" aria-label="Введите URL" required>
-                        <button type="submit" class="btn btn-secondary shadow-sm px-4">Проверить</button>
+                        <button type="submit" class="btn btn-info shadow-sm px-4">Проверить</button>
                     </div>
                 </form>
 
