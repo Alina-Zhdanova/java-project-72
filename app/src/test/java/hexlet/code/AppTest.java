@@ -25,9 +25,9 @@ public class AppTest {
     @Test
     public void testMainPage() {
         JavalinTest.test(app, (server, client) -> {
-           var response = client.get(NamedRoutes.rootPath());
-           assertThat(response.code()).isEqualTo(200);
-           assertThat(response.body().string()).contains("Анализатор страниц");
+            var response = client.get(NamedRoutes.rootPath());
+            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains("Анализатор страниц");
         });
     }
 
