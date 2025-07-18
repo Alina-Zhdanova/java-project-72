@@ -29,10 +29,12 @@ dependencies {
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("gg.jte:jte:3.1.9")
-    implementation("io.javalin:javalin-rendering:6.1.3")
+
+    testImplementation ("io.javalin:javalin-testtools:6.1.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:3.27.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.test {
