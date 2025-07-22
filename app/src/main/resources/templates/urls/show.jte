@@ -1,4 +1,5 @@
 @import hexlet.code.dto.urls.UrlPage
+@import hexlet.code.util.NamedRoutes
 @param UrlPage page
 
 @template.layout.page(
@@ -23,18 +24,17 @@ content = @`
 
                     <tr>
                         <th scope="row" class="fw-bold col-md-4 text-muted py-2">Дата создания</th>
-                        <td class="py-2">${page.getUrl().getCreatedAt().toString()}</td>
+                        <td class="py-2">${page.getUrl().getFormattedCreatedAt()}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="text-center">
-            <a href="#" class="btn btn-info shadow-sm mt-3 px-4">Запустить проверку</a>
-        </div>
-
-
+        <form action="${NamedRoutes.urlChecksPath(page.getUrl().getId())}" method="post" class="d-flex justify-content-center mb-3">
+                <button type="submit" class="btn btn-info shadow-sm mt-3 px-4">Запустить проверку</button>
+        </form>
+        
         <h2 class="mt-5 mb-4 fw-bold text-dark text-center">Проверки</h2>
 
         <div class="table-responsive shadow-sm rounded-3 overflow-hidden">
@@ -50,22 +50,16 @@ content = @`
                 </tr>
                 </thead>
                 <tbody>
+                @for(var check : page.getChecks())
                 <tr>
-                    <td class="py-3 px-4">1</td>
-                    <td class="py-3 px-4"><span class="badge bg-success text-white rounded-pill">200</span></td>
-                    <td class="py-3 px-4">Пример Title</td>
-                    <td class="py-3 px-4">Пример H1</td>
-                    <td class="py-3 px-4">Пример Description</td>
-                    <td class="py-3 px-4">2024-07-17 10:00:00</td>
+                    <td class="py-3 px-4">${check.getId()}</td>
+                    <td class="py-3 px-4"><span class="badge bg-success text-white rounded-pill">${check.getStatusCode()}</span></td>
+                    <td class="py-3 px-4">${check.getTitle()}</td>
+                    <td class="py-3 px-4">${check.getH1()}</td>
+                    <td class="py-3 px-4">${check.getDescription()}</td>
+                    <td class="py-3 px-4">${check.getFormattedCreatedAt()}</td>
                 </tr>
-                <tr>
-                    <td class="py-3 px-4">2</td>
-                    <td class="py-3 px-4"><span class="badge bg-warning text-white rounded-pill">404</span></td>
-                    <td class="py-3 px-4"></td>
-                    <td class="py-3 px-4"></td>
-                    <td class="py-3 px-4"></td>
-                    <td class="py-3 px-4">2024-07-16 12:30:00</td>
-                </tr>
+                @endfor
                 </tbody>
             </table>
         </div>

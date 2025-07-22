@@ -33,10 +33,17 @@ content = @`
                         <td class="py-3 px-4">
                             <a href="${NamedRoutes.urlPath(url.getId())}" class="text-decoration-none text-primary fw-medium">${url.getName()}</a>
                         </td>
-                        <td class="py-3 px-4">${url.getCreatedAt().toString()}</td>
-                        <td class="py-3 px-4">
-                            <span class="badge bg-success text-white rounded-pill">200</span>
-                        </td>
+                        @if(page.getUrlsAndLastCheck().containsKey(url))
+                            <td class="py-3 px-4">${page.getUrlsAndLastCheck().get(url).getFormattedCreatedAt()}</td>
+                            <td class="py-3 px-4">
+                                <span class="badge bg-success text-white rounded-pill">${page.getUrlsAndLastCheck().get(url).getStatusCode()}</span>
+                            </td>
+                        @else
+                            <td class="py-3 px-4"></td>
+                            <td class="py-3 px-4">
+                                <span class="badge bg-success text-white rounded-pill"></span>
+                            </td>
+                        @endif
                     </tr>
                 @endfor
                 </tbody>

@@ -3,6 +3,7 @@ package hexlet.code;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import hexlet.code.model.Url;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 
 import hexlet.code.util.NamedRoutes;
@@ -20,6 +21,7 @@ public class AppTest {
     public final void setUp() throws Exception {
         app = App.getApp();
         UrlRepository.removeAll();
+        UrlCheckRepository.removeAll();
     }
 
     @Test

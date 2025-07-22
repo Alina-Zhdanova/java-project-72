@@ -29,6 +29,8 @@ dependencies {
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation ("com.konghq:unirest-java:3.14.1")
+    implementation ("org.jsoup:jsoup:1.21.1")
 
     testImplementation ("io.javalin:javalin-testtools:6.1.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
