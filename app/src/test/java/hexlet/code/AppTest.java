@@ -7,21 +7,35 @@ import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 
 import hexlet.code.util.NamedRoutes;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
+
+import java.sql.SQLException;
+
 public class AppTest {
 
     private Javalin app;
+    private MockWebServer mockWebServer;
 
     @BeforeEach
     public final void setUp() throws Exception {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
         app = App.getApp();
         UrlRepository.removeAll();
         UrlCheckRepository.removeAll();
+    }
+
+    @AfterEach
+    public final void shutDown() {
+        mockWebServer.close();
     }
 
     @Test
@@ -54,9 +68,45 @@ public class AppTest {
     @Test
     public void testCreateUrl() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "name=https://www.test.com";
+            var requestBody = "url=https://www.test.com";
+            var url = "https://www.test.com";
             var response = client.post(NamedRoutes.urlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
+
+            var addedUrl = UrlRepository.find(url);
+            assertThat(addedUrl).isPresent();
+            assertThat(addedUrl.get().getName()).isEqualTo(url);
+        });
+    }
+
+    @Test
+    public void testChecksUrl() throws SQLException {
+
+        var mockServerUrl = mockWebServer.url("/test-url").toString();
+        var url = new Url(mockServerUrl);
+        UrlRepository.save(url);
+        var urlId = url.getId();
+
+        mockWebServer.enqueue(new MockResponse.Builder()
+            .body("<html><head><title>" + "Заголовок" + "</title>"
+                    + "<meta name=\"description\" content=\"" + "Описание" + "\">"
+                    + "</head><body><h1>" + "H1" + "</h1></body></html>")
+            .build());
+
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post(NamedRoutes.urlChecksPath(urlId));
+            assertThat(response.code()).isEqualTo(200);
+
+            var recordedRequest = mockWebServer.takeRequest();
+            assertThat(recordedRequest.getUrl().url().getPath()).isEqualTo("/test-url");
+            assertThat(recordedRequest.getMethod()).isEqualTo("GET");
+
+            var lastCheck = UrlCheckRepository.find(url.getId()).getFirst();
+            assertThat(lastCheck).isNotNull();
+            assertThat(lastCheck.getStatusCode()).isEqualTo(200);
+            assertThat(lastCheck.getTitle()).isEqualTo("Заголовок");
+            assertThat(lastCheck.getDescription()).isEqualTo("Описание");
+            assertThat(lastCheck.getH1()).isEqualTo("H1");
         });
     }
 }
