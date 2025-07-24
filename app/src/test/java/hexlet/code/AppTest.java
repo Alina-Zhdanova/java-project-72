@@ -16,13 +16,16 @@ import org.junit.jupiter.api.Test;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class AppTest {
 
     private Javalin app;
     private MockWebServer mockWebServer;
 
     @BeforeEach
-    public final void setUp() throws Exception {
+    public final void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
         app = App.getApp();
