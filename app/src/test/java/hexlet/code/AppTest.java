@@ -16,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
-
-import java.sql.SQLException;
-
 public class AppTest {
 
     private Javalin app;
@@ -80,7 +77,7 @@ public class AppTest {
     }
 
     @Test
-    public void testChecksUrl() throws SQLException {
+    public void testChecksUrl() {
 
         var mockServerUrl = mockWebServer.url("/test-url").toString();
         var url = new Url(mockServerUrl);
