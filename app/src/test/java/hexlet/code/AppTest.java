@@ -17,7 +17,6 @@ import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class AppTest {
 
