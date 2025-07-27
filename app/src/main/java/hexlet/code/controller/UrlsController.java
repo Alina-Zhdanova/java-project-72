@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 
 import kong.unirest.Unirest;
-import kong.unirest.HttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -106,7 +105,7 @@ public class UrlsController {
         var url = UrlRepository.find(id)
             .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
 
-        HttpResponse<String> response = Unirest.get(url.getName()).asString();
+        var response = Unirest.get(url.getName()).asString();
 
         var statusCode = response.getStatus();
 

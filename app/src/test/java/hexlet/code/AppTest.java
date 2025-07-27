@@ -61,20 +61,28 @@ public class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.urlPath(url.getId()));
             assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().toString().contains(url.toString()));
         });
     }
 
     @Test
     public void testCreateUrl() {
+
+        var mockServerUrl = mockWebServer.url("/").toString().replaceAll("/$", "");
+
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://www.test.com";
-            var url = "https://www.test.com";
+
+            var requestBody = "url=" + mockServerUrl;
+            // var requestBody = "url=https://www.test.com";
+            // var url = "https://www.test.com";
+
             var response = client.post(NamedRoutes.urlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
 
-            var addedUrl = UrlRepository.find(url);
+            var addedUrl = UrlRepository.find(mockServerUrl);
             assertThat(addedUrl).isPresent();
-            assertThat(addedUrl.get().getName()).isEqualTo(url);
+            assertThat(addedUrl).isNotNull();
+            assertThat(addedUrl.get().getName()).isEqualTo(mockServerUrl);
         });
     }
 
