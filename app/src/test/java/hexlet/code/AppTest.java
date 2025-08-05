@@ -9,7 +9,8 @@ import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,63 +19,79 @@ import io.javalin.testtools.JavalinTest;
 
 import java.io.IOException;
 
-public class AppTest {
+class AppTest {
 
     private Javalin app;
-    private MockWebServer mockWebServer;
+    private static MockWebServer mockWebServer;
 
     @BeforeEach
-    public final void setUp() throws IOException {
-        mockWebServer = new MockWebServer();
-        mockWebServer.start();
+    final void setUp() {
         app = App.getApp();
         UrlRepository.removeAll();
         UrlCheckRepository.removeAll();
     }
 
-    @AfterEach
-    public final void shutDown() {
+    @BeforeAll
+    static void mockSetUp() throws IOException {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+    }
+
+    @AfterAll
+    static void shutDown() {
         mockWebServer.close();
     }
 
     @Test
-    public void testMainPage() {
+    void testMainPage() {
+
         JavalinTest.test(app, (server, client) -> {
+
             var response = client.get(NamedRoutes.rootPath());
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("Анализатор страниц");
+
         });
+
     }
 
     @Test
-    public void testUrlsPage() {
+    void testUrlsPage() {
+
         JavalinTest.test(app, (server, client) -> {
+
             var response = client.get(NamedRoutes.urlsPath());
             assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains("Сайты");
+
         });
+
     }
 
     @Test
-    public void testUrlPage() {
+    void testUrlPage() {
+
         var url = new Url("https://www.test.com");
         UrlRepository.save(url);
+
         JavalinTest.test(app, (server, client) -> {
+
             var response = client.get(NamedRoutes.urlPath(url.getId()));
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().toString().contains(url.toString()));
+
         });
+
     }
 
     @Test
-    public void testCreateUrl() {
+    void testCreateUrl() {
 
         var mockServerUrl = mockWebServer.url("/").toString().replaceAll("/$", "");
 
         JavalinTest.test(app, (server, client) -> {
 
             var requestBody = "url=" + mockServerUrl;
-            // var requestBody = "url=https://www.test.com";
-            // var url = "https://www.test.com";
 
             var response = client.post(NamedRoutes.urlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
@@ -83,11 +100,32 @@ public class AppTest {
             assertThat(addedUrl).isPresent();
             assertThat(addedUrl).isNotNull();
             assertThat(addedUrl.get().getName()).isEqualTo(mockServerUrl);
+
         });
+
     }
 
     @Test
-    public void testChecksUrl() {
+    void testCreateIncorrectUrl() {
+
+        var incorrectUrl = "incorrectUrl";
+
+        JavalinTest.test(app, (server, client) -> {
+
+            var requestBody = "url=" + incorrectUrl;
+
+            var response = client.post(NamedRoutes.urlsPath(), requestBody);
+            assertThat(response.code()).isEqualTo(200);
+
+            var addedUrl = UrlRepository.find(incorrectUrl);
+            assertThat(addedUrl).isEmpty();
+
+        });
+
+    }
+
+    @Test
+    void testChecksUrl() {
 
         var mockServerUrl = mockWebServer.url("/test-url").toString();
         var url = new Url(mockServerUrl);
@@ -101,6 +139,7 @@ public class AppTest {
             .build());
 
         JavalinTest.test(app, (server, client) -> {
+
             var response = client.post(NamedRoutes.urlChecksPath(urlId));
             assertThat(response.code()).isEqualTo(200);
 
@@ -114,6 +153,8 @@ public class AppTest {
             assertThat(lastCheck.getTitle()).isEqualTo("Заголовок");
             assertThat(lastCheck.getDescription()).isEqualTo("Описание");
             assertThat(lastCheck.getH1()).isEqualTo("H1");
+
         });
+
     }
 }
