@@ -78,7 +78,7 @@ class AppTest {
 
             var response = client.get(NamedRoutes.urlPath(url.getId()));
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().toString().contains(url.toString()));
+            assertThat(response.body().string()).contains(url.getName());
 
         });
 
