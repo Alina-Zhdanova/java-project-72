@@ -18,6 +18,7 @@ import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 class AppTest {
 
@@ -25,7 +26,7 @@ class AppTest {
     private static MockWebServer mockWebServer;
 
     @BeforeEach
-    final void setUp() {
+    final void setUp() throws SQLException {
         app = App.getApp();
         UrlRepository.removeAll();
         UrlCheckRepository.removeAll();
@@ -69,7 +70,7 @@ class AppTest {
     }
 
     @Test
-    void testUrlPage() {
+    void testUrlPage() throws SQLException {
 
         var url = new Url("https://www.test.com");
         UrlRepository.save(url);
@@ -125,7 +126,7 @@ class AppTest {
     }
 
     @Test
-    void testChecksUrl() {
+    void testChecksUrl() throws SQLException {
 
         var mockServerUrl = mockWebServer.url("/test-url").toString();
         var url = new Url(mockServerUrl);

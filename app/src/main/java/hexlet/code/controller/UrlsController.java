@@ -13,6 +13,7 @@ import io.javalin.http.NotFoundResponse;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import kong.unirest.Unirest;
@@ -30,7 +31,7 @@ public class UrlsController {
         ctx.render("index.jte", model("page", page));
     }
 
-    public static void index(Context ctx) {
+    public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
         var urlsAndLastCheck = new LinkedHashMap<Url, UrlCheck>();
         for (var url : urls) {
@@ -45,7 +46,7 @@ public class UrlsController {
         ctx.render("urls/index.jte", model("page", page));
     }
 
-    public static void show(Context ctx) {
+    public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlRepository.find(id)
             .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -54,7 +55,7 @@ public class UrlsController {
         ctx.render("urls/show.jte", model("page", page));
     }
 
-    public static void create(Context ctx) {
+    public static void create(Context ctx) throws SQLException {
 
         var enteredAddress = ctx.formParam("url");
 
@@ -99,7 +100,7 @@ public class UrlsController {
 
     }
 
-    public static void checks(Context ctx) {
+    public static void checks(Context ctx) throws SQLException {
 
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlRepository.find(id)
