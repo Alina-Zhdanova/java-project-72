@@ -25,25 +25,38 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 public class UrlsController {
 
     public static void root(Context ctx) {
+
         var page = new BasePage();
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flashType"));
+
         ctx.render("index.jte", model("page", page));
+
     }
 
     public static void index(Context ctx) throws SQLException {
+
         var urls = UrlRepository.getEntities();
+        var checks = UrlCheckRepository.getEntities();
+
         var urlsAndLastCheck = new LinkedHashMap<Url, UrlCheck>();
+
         for (var url : urls) {
-            if (!UrlCheckRepository.find(url.getId()).isEmpty()) {
-                var lastCheck = UrlCheckRepository.find(url.getId()).getFirst();
-                urlsAndLastCheck.put(url, lastCheck);
+
+            var urlChecks = checks.stream()
+                .filter(check -> check.getUrlId().equals(url.getId()))
+                .toList();
+
+            if (!urlChecks.isEmpty()) {
+                urlsAndLastCheck.put(url, urlChecks.getLast());
             }
         }
+
         var page = new UrlsPage(urls, urlsAndLastCheck);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flashType"));
         ctx.render("urls/index.jte", model("page", page));
+
     }
 
     public static void show(Context ctx) throws SQLException {

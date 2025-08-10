@@ -5,6 +5,7 @@ import hexlet.code.model.UrlCheck;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UrlCheckRepository extends BaseRepository {
@@ -60,6 +61,7 @@ public class UrlCheckRepository extends BaseRepository {
                 result.add(check);
             }
 
+            Collections.reverse(result);
             return result;
 
         }
