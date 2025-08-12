@@ -14,7 +14,8 @@ import io.javalin.http.NotFoundResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
@@ -37,19 +38,18 @@ public class UrlsController {
     public static void index(Context ctx) throws SQLException {
 
         var urls = UrlRepository.getEntities();
-        var checks = UrlCheckRepository.getEntities();
+        var checks = UrlCheckRepository.getEntitiesOrderedByCreatedAt();
 
-        var urlsAndLastCheck = new LinkedHashMap<Url, UrlCheck>();
+        var urlsAndLastCheck = new HashMap<Url, UrlCheck>();
 
         for (var url : urls) {
 
-            var urlChecks = checks.stream()
-                .filter(check -> check.getUrlId().equals(url.getId()))
-                .toList();
+            final var currentUrlId = url.getId();
+            checks.stream()
+                .filter(check -> check.getUrlId().equals(currentUrlId))
+                .findFirst()
+                .ifPresent(lastCheck -> urlsAndLastCheck.put(url, lastCheck));
 
-            if (!urlChecks.isEmpty()) {
-                urlsAndLastCheck.put(url, urlChecks.getLast());
-            }
         }
 
         var page = new UrlsPage(urls, urlsAndLastCheck);
@@ -64,6 +64,7 @@ public class UrlsController {
         var url = UrlRepository.find(id)
             .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
         var checks = UrlCheckRepository.find(id);
+        checks.sort(Comparator.comparing(UrlCheck::getCreatedAt).reversed());
         var page = new UrlPage(url, checks);
         ctx.render("urls/show.jte", model("page", page));
     }

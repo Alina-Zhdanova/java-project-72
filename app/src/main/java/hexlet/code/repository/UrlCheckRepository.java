@@ -61,15 +61,14 @@ public class UrlCheckRepository extends BaseRepository {
                 result.add(check);
             }
 
-            Collections.reverse(result);
             return result;
 
         }
     }
 
-    public static List<UrlCheck> getEntities() throws SQLException {
+    public static List<UrlCheck> getEntitiesOrderedByCreatedAt() throws SQLException {
 
-        var sql = "SELECT * FROM url_checks";
+        var sql = "SELECT * FROM url_checks ORDER BY created_at DESC";
 
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
