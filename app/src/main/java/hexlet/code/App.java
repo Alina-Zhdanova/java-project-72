@@ -42,7 +42,7 @@ public class App {
 
         var dataSource = new HikariDataSource(hikariConfig);
 
-        var url = App.class.getClassLoader().getResourceAsStream("urls.sql");
+        var url = App.class.getClassLoader().getResourceAsStream("schema.sql");
         var sql = new BufferedReader(new InputStreamReader(url))
             .lines().collect(Collectors.joining("\n"));
 
