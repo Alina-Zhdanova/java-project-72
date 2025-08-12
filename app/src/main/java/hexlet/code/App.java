@@ -24,7 +24,8 @@ public class App {
     }
 
     private static String getDatabaseUrl() {
-        return System.getenv().getOrDefault("DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        return System.getenv().getOrDefault("DATABASE_URL",
+            "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
     }
 
     private static TemplateEngine createTemplateEngine() {

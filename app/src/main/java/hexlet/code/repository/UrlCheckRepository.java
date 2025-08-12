@@ -19,6 +19,8 @@ public class UrlCheckRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
+            System.out.println("[DEBUG] Connection: " + conn.getMetaData().getURL()); // Куда сохраняем?
+
             var createdAt = Timestamp.valueOf(LocalDateTime.now());
 
             preparedStatement.setLong(1, check.getUrlId());
@@ -28,6 +30,8 @@ public class UrlCheckRepository extends BaseRepository {
             preparedStatement.setString(5, check.getDescription());
             preparedStatement.setTimestamp(6, createdAt);
             preparedStatement.executeUpdate();
+
+            System.out.println("[DEBUG] Check saved!"); // Дошли ли сюда?
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
 
