@@ -127,11 +127,11 @@ public class UrlsController {
         var body = response.getBody();
         Document documentBody = Jsoup.parse(body);
 
-        var title = documentBody.title();
+        var title = documentBody.title() != null ? documentBody.title() : " ";
         var h1Element = documentBody.selectFirst("h1");
-        var h1 = h1Element != null ? h1Element.text() : "";
+        var h1 = h1Element != null ? h1Element.text() : " ";
         var descriptionElement = documentBody.selectFirst("meta[name=description]");
-        var description = descriptionElement != null ? descriptionElement.attr("content") : "";
+        var description = descriptionElement != null ? descriptionElement.attr("content") : " ";
 
         var urlCheck = new UrlCheck(id, statusCode, title, h1, description);
         UrlCheckRepository.save(urlCheck);
