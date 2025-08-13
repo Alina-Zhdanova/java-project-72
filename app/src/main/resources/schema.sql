@@ -19,21 +19,3 @@ CREATE TABLE url_checks (
     created_at TIMESTAMP
     CONSTRAINT fk_url FOREIGN KEY (url_id) REFERENCES urls (id)
 );
-
-
---CREATE TABLE urls (
---    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
---    name VARCHAR(255) NOT NULL,
---    created_at TIMESTAMP
---);
---
---CREATE TABLE url_checks (
---    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
---    status_code INTEGER,
---    title VARCHAR(255),
---    h1 VARCHAR(255),
---    description TEXT,
---    url_id INTEGER NOT NULL,
---    created_at TIMESTAMP NOT NULL,
---    CONSTRAINT fk_url FOREIGN KEY (url_id) REFERENCES urls (id)
---);
