@@ -11,7 +11,6 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
@@ -19,14 +18,25 @@ import java.util.stream.Collectors;
 
 public class App {
 
-    public static void main(String[] args) throws SQLException {
-        var dataSource = getDataSource();
-        var app = getApp(dataSource);
+    public static void main(String[] args) {
+        var app = getApp();
         app.start(7070);
     }
 
-    public static DataSource getDataSource() throws SQLException {
-        var jdbcUrl = System.getenv().getOrDefault("DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+    private static String getDatabaseUrl() {
+        return System.getenv().getOrDefault("DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return templateEngine;
+    }
+
+    public static Javalin getApp() {
+
+        var jdbcUrl = getDatabaseUrl();
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(jdbcUrl);
 
@@ -39,21 +49,11 @@ public class App {
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
             statement.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
-        return dataSource;
-    }
-
-    private static TemplateEngine createTemplateEngine() {
-        ClassLoader classLoader = App.class.getClassLoader();
-        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
-        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
-        return templateEngine;
-    }
-
-    public static Javalin getApp(DataSource dataSource) {
-
-        BaseRepository.dataSource = (HikariDataSource) dataSource;
+        BaseRepository.dataSource = dataSource;
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
