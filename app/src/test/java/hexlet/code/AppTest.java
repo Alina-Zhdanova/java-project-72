@@ -2,6 +2,8 @@ package hexlet.code;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.model.Url;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
@@ -17,8 +19,12 @@ import org.junit.jupiter.api.Test;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
+import javax.sql.DataSource;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
 
 class AppTest {
 
@@ -27,7 +33,20 @@ class AppTest {
 
     @BeforeEach
     final void setUp() throws SQLException {
-        app = App.getApp();
+
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        DataSource testDataSource = new HikariDataSource(hikariConfig);
+
+        try (var connection = testDataSource.getConnection();
+             var statement = connection.createStatement()) {
+            var schema = getClass().getClassLoader().getResourceAsStream("schema.sql");
+            var sql = new BufferedReader(new InputStreamReader(schema))
+                .lines().collect(Collectors.joining("\n"));
+            statement.execute(sql);
+        }
+
+        app = App.getApp(testDataSource);
         UrlRepository.removeAll();
         UrlCheckRepository.removeAll();
     }
